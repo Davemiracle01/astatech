@@ -218,7 +218,187 @@
     <div class="trust-item"><span class="ti">🇰🇪</span> Nairobi Prices</div>
   </div>
 </section>
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Player</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#060608;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:16px;font-family:'Space Mono',monospace;}
+:root{--g:#00ff88;--gd:#f5c842;--bg:#0e0e12;--br:#1e1e28;--mu:#44445a;}
+.player{width:100%;max-width:420px;border:1px solid var(--br);background:var(--bg);overflow:hidden;}
+.vbox{position:relative;aspect-ratio:16/9;background:#000;}
+.vbox iframe{position:absolute;inset:0;width:100%;height:100%;border:none;}
+.fl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;transition:opacity .15s;z-index:5;font-size:40px;color:rgba(255,255,255,.8);}
+.fl.s{opacity:1;}
+.viz{height:32px;background:#09090d;display:flex;align-items:flex-end;gap:2px;padding:5px 8px 4px;border-top:1px solid var(--br);}
+.vb{flex:1;background:var(--g);border-radius:1px 1px 0 0;min-height:2px;opacity:.5;}
+.viz.off .vb{animation:none!important;height:2px!important;opacity:.12;}
+.prog{padding:10px 12px 8px;border-top:1px solid var(--br);background:#0a0a0e;}
+.bar{width:100%;height:3px;background:var(--br);border-radius:2px;cursor:pointer;position:relative;margin-bottom:6px;}
+.bar:hover{height:5px;margin-top:-1px;}
+.fill{height:100%;background:linear-gradient(90deg,var(--g),var(--gd));border-radius:2px;width:0%;pointer-events:none;transition:width .5s linear;}
+.thumb{width:10px;height:10px;background:var(--g);border-radius:50%;position:absolute;top:50%;left:0%;transform:translate(-50%,-50%);box-shadow:0 0 6px var(--g);pointer-events:none;transition:left .5s linear;}
+.times{display:flex;justify-content:space-between;font-size:8px;color:var(--mu);letter-spacing:1px;}
+#tc{color:var(--g);}
+.ctrl{border-top:1px solid var(--br);padding:10px 12px;display:flex;align-items:center;gap:7px;flex-wrap:wrap;background:var(--bg);}
+.b{background:none;border:1px solid var(--br);color:#eee;font-family:'Space Mono',monospace;font-size:8px;letter-spacing:1px;padding:6px 10px;cursor:pointer;text-transform:uppercase;transition:all .2s;white-space:nowrap;text-decoration:none;display:inline-block;}
+.b:hover{border-color:var(--g);color:var(--g);}
+.b.on{background:var(--g);color:#000;border-color:var(--g);font-weight:700;}
+.sep{width:1px;height:22px;background:var(--br);flex-shrink:0;}
+.vi{font-size:12px;cursor:pointer;}
+input[type=range]{width:60px;-webkit-appearance:none;height:2px;background:var(--br);outline:none;cursor:pointer;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;border-radius:50%;background:var(--g);}
+.spd-row{border-top:1px solid var(--br);padding:7px 12px;display:flex;align-items:center;gap:5px;background:#09090d;}
+.sl{font-size:7px;color:var(--mu);letter-spacing:2px;}
+.sb{background:none;border:1px solid var(--br);color:var(--mu);font-family:'Space Mono',monospace;font-size:7px;padding:3px 6px;cursor:pointer;transition:all .2s;}
+.sb:hover{border-color:var(--gd);color:var(--gd);}
+.sb.on{background:var(--gd);color:#000;border-color:var(--gd);}
+.lp-row{border-top:1px solid var(--br);padding:7px 12px;display:flex;align-items:center;gap:5px;flex-wrap:wrap;background:var(--bg);}
+.ll{font-size:7px;color:var(--mu);letter-spacing:2px;}
+.lb{background:none;border:1px solid var(--br);color:var(--mu);font-family:'Space Mono',monospace;font-size:7px;padding:3px 7px;cursor:pointer;transition:all .2s;text-transform:uppercase;}
+.lb:hover{border-color:var(--g);color:var(--g);}
+.lb.on{background:var(--g);color:#000;border-color:var(--g);}
+.lb.gon{background:var(--gd);color:#000;border-color:var(--gd);}
+#abst{font-size:7px;color:var(--gd);}
+.meta{border-top:1px solid var(--br);padding:8px 12px;display:flex;justify-content:space-between;align-items:center;background:#07070a;}
+.mt{font-size:8px;color:var(--mu);letter-spacing:1px;}
+.mt b{color:#eee;font-weight:400;}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#13131a;border:1px solid var(--br);font-family:'Space Mono',monospace;font-size:9px;color:var(--g);letter-spacing:2px;padding:8px 16px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;}
+#toast.s{opacity:1;}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+<div class="player">
+  <div class="vbox">
+    <iframe id="yt" src="https://www.youtube.com/embed/DrJ2yPlBTq8?enablejsapi=1&rel=0&modestbranding=1" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe>
+    <div class="fl" id="fl"></div>
+  </div>
+  <div class="viz off" id="viz"></div>
+  <div class="prog">
+    <div class="bar" id="bar"><div class="fill" id="fill"></div><div class="thumb" id="thumb"></div></div>
+    <div class="times"><span id="tc">0:00</span><span id="tt">0:00</span></div>
+  </div>
+  <div class="ctrl">
+    <button class="b" id="bp" onclick="cmd('playVideo');fx('▶')">▶</button>
+    <button class="b" id="bpa" onclick="cmd('pauseVideo');fx('⏸')">⏸</button>
+    <button class="b" onclick="cmd('seekTo',0);fx('↺')">↺</button>
+    <div class="sep"></div>
+    <button class="b" onclick="sk(-10)">«10s</button>
+    <button class="b" onclick="sk(10)">10s»</button>
+    <div class="sep"></div>
+    <span class="vi" id="vi" onclick="mu()">🔊</span>
+    <input type="range" id="vol" min="0" max="100" value="80" oninput="sv(this.value)"/>
+    <div class="sep"></div>
+    <button class="b" onclick="fs()">⤢</button>
+    <button class="b" id="bsh" onclick="cp()">⎘</button>
+    <a href="https://youtu.be/DrJ2yPlBTq8" target="_blank" class="b">↗YT</a>
+  </div>
+  <div class="spd-row">
+    <span class="sl">SPEED</span>
+    <button class="sb" data-s=".5" onclick="sp(this)">0.5×</button>
+    <button class="sb on" data-s="1" onclick="sp(this)">1×</button>
+    <button class="sb" data-s="1.5" onclick="sp(this)">1.5×</button>
+    <button class="sb" data-s="2" onclick="sp(this)">2×</button>
+  </div>
+  <div class="lp-row">
+    <span class="ll">LOOP</span>
+    <button class="lb on" data-l="off" onclick="lp(this)">Off</button>
+    <button class="lb" data-l="one" onclick="lp(this)">↩Once</button>
+    <button class="lb" data-l="inf" onclick="lp(this)">∞</button>
+    <button class="lb" id="lab" onclick="ab()">A–B</button>
+    <span id="abst"></span>
+  </div>
+  <div class="meta">
+    <div class="mt"><b>A.S.T.A.™ TECH</b> · Featured</div>
+    <a href="https://whatsapp.com/channel/0029VavpWUvGk1Fkbzz0vz0v" target="_blank" class="b" style="font-size:7px;color:#00ff88;border-color:#1e3a2a;">WA Channel ↗</a>
+  </div>
+</div>
+<script>
+const yt=document.getElementById('yt');
+function cmd(f,...a){yt.contentWindow.postMessage(JSON.stringify({event:'command',func:f,args:a}),'*');}
+function fx(i){const f=document.getElementById('fl');f.textContent=i;f.classList.add('s');clearTimeout(f._t);f._t=setTimeout(()=>f.classList.remove('s'),400);}
+let muted=false;
+function mu(){muted=!muted;cmd(muted?'mute':'unMute');document.getElementById('vi').textContent=muted?'🔇':'🔊';toast(muted?'🔇 Muted':'🔊 Unmuted');fx(muted?'🔇':'🔊');}
+function sv(v){yt.contentWindow.postMessage(JSON.stringify({event:'command',func:'setVolume',args:[+v]}),'*');if(muted&&v>0){muted=false;cmd('unMute');document.getElementById('vi').textContent='🔊';}}
+let curT=0,totD=0;
+function sk(d){const t=Math.max(0,curT+d);yt.contentWindow.postMessage(JSON.stringify({event:'command',func:'seekTo',args:[t,true]}),'*');fx(d>0?`+${d}s`:`${d}s`);}
+function sp(b){document.querySelectorAll('.sb').forEach(x=>x.classList.remove('on'));b.classList.add('on');yt.contentWindow.postMessage(JSON.stringify({event:'command',func:'setPlaybackRate',args:[+b.dataset.s]}),'*');toast(`Speed: ${b.dataset.s}×`);}
+function fs(){yt.requestFullscreen&&yt.requestFullscreen();}
+function cp(){navigator.clipboard.writeText('https://youtu.be/DrJ2yPlBTq8').then(()=>{const b=document.getElementById('bsh');b.textContent='✓';b.classList.add('on');toast('🔗 Copied!');setTimeout(()=>{b.textContent='⎘';b.classList.remove('on');},2000);});}
+let loop='off',lc=0;
+function lp(b){document.querySelectorAll('.lb').forEach(x=>x.classList.remove('on'));b.classList.add('on');loop=b.dataset.l;lc=0;abA=abB=null;document.getElementById('abst').textContent='';document.getElementById('lab').classList.remove('gon');toast(`Loop: ${loop==='off'?'Off':loop==='one'?'↩ Once':'∞'}`);}
+let abA=null,abB=null;
+function ab(){const b=document.getElementById('lab'),st=document.getElementById('abst');
+  if(abA===null){abA=curT;st.textContent=`A:${fmt(abA)}`;b.classList.add('gon');toast(`A → ${fmt(abA)}`);}
+  else if(abB===null){if(curT<=abA){toast('B must be after A');return;}abB=curT;loop='ab';st.textContent=`${fmt(abA)}↔${fmt(abB)}`;toast('A–B set');}
+  else{abA=abB=null;loop='off';b.classList.remove('gon');st.textContent='';document.querySelector('.lb[data-l="off"]').classList.add('on');toast('A–B cleared');}
+}
+function fmt(s){s=Math.floor(s);return`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;}
+document.getElementById('bar').addEventListener('click',function(e){
+  if(!totD)return;
+  const r=this.getBoundingClientRect(),t=((e.clientX-r.left)/r.width)*totD;
+  yt.contentWindow.postMessage(JSON.stringify({event:'command',func:'seekTo',args:[t,true]}),'*');fx('⏩');
+});
+window.addEventListener('message',e=>{
+  let d;try{d=typeof e.data==='string'?JSON.parse(e.data):e.data;}catch{return;}
+  if(!d.info)return;const i=d.info;
+  if(typeof i.currentTime==='number'){
+    curT=i.currentTime;
+    if(typeof i.duration==='number'&&i.duration>0){
+      totD=i.duration;const p=(curT/totD)*100;
+      document.getElementById('fill').style.width=p+'%';
+      document.getElementById('thumb').style.left=p+'%';
+      document.getElementById('tc').textContent=fmt(curT);
+      document.getElementById('tt').textContent=fmt(totD);
+    }
+    if(totD>0&&(totD-curT)<1.2){
+      if(loop==='inf'){cmd('seekTo',0);cmd('playVideo');}
+      if(loop==='one'&&lc===0){cmd('seekTo',0);cmd('playVideo');lc++;}
+    }
+    if(loop==='ab'&&abA!==null&&abB!==null&&curT>=abB){cmd('seekTo',abA);cmd('playVideo');}
+  }
+  if(typeof i.playerState==='number'){
+    const pl=i.playerState===1;
+    document.getElementById('viz').classList.toggle('off',!pl);
+    document.getElementById('bp').classList.toggle('on',pl);
+    document.getElementById('bpa').classList.toggle('on',!pl&&i.playerState===2);
+  }
+});
+setInterval(()=>{try{yt.contentWindow.postMessage(JSON.stringify({event:'listening'}),'*');}catch{}},500);
+const viz=document.getElementById('viz');
+for(let i=0;i<40;i++){
+  const b=document.createElement('div');b.className='vb';
+  const s=document.createElement('style');
+  const mh=4+Math.floor(Math.random()*18);
+  s.textContent=`@keyframes vb${i}{from{height:2px;opacity:.2;}to{height:${mh}px;opacity:.8;}}`;
+  document.head.appendChild(s);
+  b.style.cssText=`animation:vb${i} ${(.3+Math.random()*.5).toFixed(2)}s ease-in-out ${(Math.random()*.6).toFixed(2)}s infinite alternate;`;
+  viz.appendChild(b);
+}
+document.addEventListener('keydown',e=>{
+  if(['INPUT','TEXTAREA'].includes(document.activeElement.tagName))return;
+  const v=document.getElementById('vol');
+  switch(e.key){
+    case' ':case'k':e.preventDefault();document.getElementById('viz').classList.contains('off')?(cmd('playVideo'),fx('▶')):(cmd('pauseVideo'),fx('⏸'));break;
+    case'ArrowLeft':e.preventDefault();sk(-10);break;
+    case'ArrowRight':e.preventDefault();sk(10);break;
+    case'ArrowUp':e.preventDefault();v.value=Math.min(100,+v.value+10);sv(v.value);toast(`🔊 ${v.value}%`);break;
+    case'ArrowDown':e.preventDefault();v.value=Math.max(0,+v.value-10);sv(v.value);toast(`🔉 ${v.value}%`);break;
+    case'm':case'M':mu();break;
+    case'f':case'F':fs();break;
+    case'r':case'R':cmd('seekTo',0);fx('↺');toast('↺ Restarted');break;
+  }
+});
+let tt;function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('s');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('s'),1800);}
+</script>
+</body>
+</html>
+  
 <!-- PRODUCTS -->
 <section id="products" class="fiu">
   <div class="products-grid">
