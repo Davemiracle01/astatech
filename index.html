@@ -386,6 +386,31 @@ function nbTick(){
 }
 setInterval(nbTick,1000);nbTick();
 
+
+
+
+  <section id="videos" class="fiu">
+  <div class="vid-header">
+    <div class="vid-title">WATCH <span class="g">IN ACTION</span></div>
+    <div class="vid-controls">
+      <div class="vid-status" id="vid-status">
+        <span class="dot" id="vid-dot"></span>
+        <span id="vid-status-text">Autoplaying</span>
+      </div>
+      <button class="vid-btn active" id="btn-play" onclick="vidPlay()">Play</button>
+      <button class="vid-btn" id="btn-stop" onclick="vidStop()">Stop</button>
+    </div>
+  </div>
+  <div class="vid-player-wrap">
+    <iframe id="yt-frame" 
+            src="https://www.youtube.com/embed/mHc4r7ZUgT4?autoplay=1&enablejsapi=1&rel=0&modestbranding=1" 
+            allow="autoplay; encrypted-media; picture-in-picture" 
+            allowfullscreen>
+    </iframe>
+  </div>
+  <!-- Thumbs unchanged, JS handles switching -->
+</section>
+
 // ── VISITOR INFO ──
 const ua=navigator.userAgent;
 function getBr(){if(ua.includes('Edg'))return'Edge';if(ua.includes('OPR'))return'Opera';if(ua.includes('Chrome'))return'Chrome';if(ua.includes('Firefox'))return'Firefox';if(ua.includes('Safari'))return'Safari';return'Browser';}
