@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>A.S.T.A.™ TECH Store — David Kiama</title>
+  <meta name="description" content="WhatsApp bots, Pterodactyl panels & dev tools. Built in Nairobi. Pay after service."/>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@700;900&family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --blue:        #3b6b9e;
+      --blue-light:  #5a8dbf;
+      --blue-glint:  #7ab0d8;
+      --blue-border: rgba(90,141,191,0.22);
+      --blue-mist:   rgba(59,107,158,0.08);
+      --gold:        #b8975a;
+      --gold-dim:    #7a6038;
+      --gold-bright: #d4b07a;
+      --gold-border: rgba(184,151,90,0.22);
+      --bg:          #080c10;
+      --bg2:         #0b1018;
+      --surface:     #0d1420;
+      --surface2:    #111c2e;
+      --text:        #ccd8e8;
+      --text-dim:    #8a9db5;
+      --muted:       #3d5068;
+      --border:      #14202e;
+      --crimson:     #7a1f1f;
+      --green:       #2d7a5a;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: 'EB Garamond', serif; font-weight: 400; overflow-x: hidden; cursor: none; }
+
+    /* grain */
+    body::before { content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9001; opacity: .1; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+    body::after { content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9000; background: radial-gradient(ellipse at 50% 30%, transparent 40%, rgba(4,8,14,0.7) 100%); }
+
+    /* cursor */
+    #cur { width:7px; height:7px; background:var(--blue-light); border-radius:50%; position:fixed; top:0; left:0; pointer-events:none; z-index:9999; box-shadow:0 0 10px rgba(90,141,191,0.5); transition:width .2s,height .2s,background .3s; }
+    #cur-ring { width:30px; height:30px; border:1px solid rgba(90,141,191,0.35); border-radius:50%; position:fixed; top:0; left:0; pointer-events:none; z-index:9998; transition:all .14s ease; }
+    body.hovering #cur { width:5px; height:5px; background:var(--gold-bright); box-shadow:0 0 14px rgba(184,151,90,0.7); }
+    body.hovering #cur-ring { width:46px; height:46px; border-color:rgba(184,151,90,0.4); }
+
+    /* nav */
+    nav { position:fixed; top:0; left:0; right:0; z-index:500; height:66px; display:flex; justify-content:space-between; align-items:center; padding:0 56px; background:rgba(8,12,16,0.94); backdrop-filter:blur(24px); border-bottom:1px solid var(--blue-border); }
+    nav::after { content:''; position:absolute; bottom:-1px; left:56px; right:56px; height:1px; background:linear-gradient(90deg,transparent,var(--blue),var(--gold-dim),var(--blue),transparent); opacity:.4; }
+    .nav-logo { font-family:'Cinzel',serif; font-size:11px; font-weight:700; color:var(--text); text-decoration:none; letter-spacing:6px; display:flex; align-items:center; gap:12px; }
+    .nav-logo .sub { color:var(--muted); font-weight:400; }
+    .nav-back { font-family:'Cinzel',serif; font-size:9px; color:var(--muted); text-decoration:none; letter-spacing:4px; text-transform:uppercase; transition:color .3s; }
+    .nav-back:hover { color:var(--blue-glint); }
+    .nav-right { display:flex; align-items:center; gap:20px; }
+    .nav-order { font-family:'Cinzel',serif; font-size:9px; font-weight:700; letter-spacing:3px; padding:10px 22px; background:var(--blue); color:#fff; text-decoration:none; text-transform:uppercase; transition:all .3s; cursor:none; border:1px solid var(--blue); }
+    .nav-order:hover { background:var(--blue-light); }
+    .nav-ham { display:none; flex-direction:column; gap:5px; cursor:none; background:none; border:none; padding:4px; }
+    .nav-ham span { display:block; width:22px; height:1px; background:var(--text-dim); }
+
+    /* mob menu */
+    #mob-menu { position:fixed; inset:0; z-index:490; background:rgba(8,12,16,.98); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:32px; transform:translateY(-100%); transition:transform .5s ease; }
+    #mob-menu.open { transform:translateY(0); }
+    #mob-menu a { font-family:'Cinzel',serif; font-size:14px; font-weight:600; color:var(--text-dim); text-decoration:none; letter-spacing:6px; text-transform:uppercase; transition:color .4s; }
+    #mob-menu a:hover { color:var(--blue-glint); }
+
+    /* status bar */
+    .sbar { position:fixed; bottom:0; left:0; right:0; z-index:500; height:36px; display:flex; justify-content:space-between; align-items:center; padding:0 56px; background:rgba(8,12,16,.96); border-top:1px solid var(--blue-border); font-family:'Cinzel',serif; font-size:8px; color:var(--muted); letter-spacing:3px; }
+    .sbar .hi { color:var(--blue-glint); }
+    .pdot { display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--blue); margin-right:8px; animation:pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.3;} }
+
+    /* ── HERO ── */
+    #store-hero { min-height:52vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:110px 56px 60px; position:relative; overflow:hidden; }
+    .hero-atm { position:absolute; inset:0; pointer-events:none; background: radial-gradient(ellipse 70% 80% at 50% 60%, rgba(59,107,158,0.07) 0%, transparent 70%); }
+    .sh-watermark { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-family:'Cinzel Decorative',serif; font-weight:900; font-size:clamp(100px,20vw,280px); color:transparent; -webkit-text-stroke:1px rgba(59,107,158,0.05); pointer-events:none; white-space:nowrap; }
+    .sh-eyebrow { font-family:'Cinzel',serif; font-size:9px; color:var(--blue); letter-spacing:6px; text-transform:uppercase; margin-bottom:20px; display:flex; align-items:center; gap:16px; justify-content:center; }
+    .sh-eyebrow::before,.sh-eyebrow::after { content:''; display:block; width:36px; height:1px; }
+    .sh-eyebrow::before { background:linear-gradient(90deg,transparent,var(--blue)); }
+    .sh-eyebrow::after  { background:linear-gradient(90deg,var(--blue),transparent); }
+    .sh-title { font-family:'Cinzel Decorative',serif; font-weight:900; font-size:clamp(52px,11vw,150px); line-height:.88; color:var(--text); }
+    .sh-title .accent { color:var(--blue-light); }
+    .sh-rule { width:min(500px,80%); height:1px; background:linear-gradient(90deg,transparent,var(--blue),var(--gold-dim),var(--blue),transparent); margin:24px auto; opacity:.5; }
+    .sh-sub { font-family:'EB Garamond',serif; font-style:italic; font-size:clamp(14px,1.8vw,18px); color:var(--text-dim); max-width:460px; line-height:1.8; margin-bottom:28px; }
+    .sh-sub strong { color:var(--text); font-style:normal; }
+    .trust-strip { display:flex; gap:24px; justify-content:center; flex-wrap:wrap; }
+    .trust-item { font-family:'Cinzel',serif; font-size:8px; color:var(--muted); display:flex; align-items:center; gap:8px; letter-spacing:2px; text-transform:uppercase; }
+    .trust-item .ti { color:var(--blue-light); font-size:13px; }
+
+    /* ── SECTION HEADER ── */
+    .sec-head { display:flex; align-items:center; gap:18px; margin-bottom:52px; }
+    .sec-num  { font-family:'Cinzel',serif; font-size:9px; color:var(--blue); letter-spacing:4px; }
+    .sec-rule { flex:1; height:1px; }
+    .sec-rule-l { background:linear-gradient(90deg,transparent,var(--blue-border)); }
+    .sec-rule-r { background:linear-gradient(90deg,var(--blue-border),transparent); }
+    .sec-title { font-family:'Cinzel',serif; font-size:9px; font-weight:600; color:var(--text-dim); letter-spacing:5px; text-transform:uppercase; }
+    .sec-gem { color:var(--blue-border); font-size:12px; }
+    section { padding:80px 56px; }
+
+    /* ── CASINO SECTION ── */
+    #casino-section { background:var(--surface); border-top:1px solid var(--blue-border); border-bottom:1px solid var(--blue-border); }
+    .casino-layout { display:grid; grid-template-columns:1fr 320px; gap:2px; background:var(--blue-border); border:1px solid var(--blue-border); }
+    .casino-machine { background:var(--bg2); display:flex; flex-direction:column; }
+    .casino-header { padding:18px 24px; border-bottom:1px solid var(--blue-border); display:flex; align-items:center; justify-content:space-between; background:var(--surface); }
+    .casino-label { font-family:'Cinzel',serif; font-size:9px; color:var(--blue-glint); letter-spacing:5px; text-transform:uppercase; }
+    .casino-tagline { font-family:'EB Garamond',serif; font-style:italic; font-size:12px; color:var(--muted); }
+    .casino-window-wrap { position:relative; overflow:hidden; height:90px; background:var(--bg); border-bottom:1px solid var(--blue-border); }
+    .casino-window-wrap::before { content:''; position:absolute; inset:0; z-index:3; background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(90,141,191,0.03) 2px,rgba(90,141,191,0.03) 4px); pointer-events:none; }
+    .casino-window-wrap::after { content:''; position:absolute; inset:0; z-index:4; background:linear-gradient(180deg,var(--bg) 0%,transparent 28%,transparent 72%,var(--bg) 100%); pointer-events:none; }
+    .casino-crosshair { position:absolute; top:50%; left:0; right:0; z-index:5; pointer-events:none; transform:translateY(-50%); }
+    .casino-crosshair::before { content:''; display:block; height:1px; background:linear-gradient(90deg,transparent,var(--blue),var(--gold),var(--blue),transparent); }
+    #casino-reel { display:flex; flex-direction:column; will-change:transform; }
+    .casino-item { display:flex; align-items:center; gap:16px; padding:10px 24px; height:90px; flex-shrink:0; }
+    .casino-track-name { font-family:'Playfair Display',serif; font-weight:700; font-size:17px; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    #spin-btn { font-family:'Cinzel',serif; font-size:10px; font-weight:700; letter-spacing:4px; text-transform:uppercase; padding:14px 32px; background:var(--blue); color:#fff; border:none; cursor:none; transition:all .3s; position:relative; overflow:hidden; }
+    #spin-btn:hover { background:var(--blue-light); }
+    .casino-result { font-family:'EB Garamond',serif; font-style:italic; font-size:14px; color:var(--text-dim); flex:1; }
+
+    /* top pick panel */
+    .top-pick-panel { background:var(--surface2); border-left:1px solid var(--blue-border); display:flex; flex-direction:column; }
+    .tp-thumb-wrap img { width:100%; aspect-ratio:16/9; object-fit:cover; display:block; filter:brightness(.8); transition:filter .4s; cursor:none; }
+    .tp-play-link { display:block; font-family:'Cinzel',serif; font-size:9px; font-weight:600; color:var(--blue-light); text-align:center; padding:14px; border-top:1px solid var(--blue-border); letter-spacing:3px; text-transform:uppercase; background:none; border-left:none; border-right:none; cursor:none; transition:all .3s; width:100%; }
+    .tp-play-link:hover { background:var(--blue); color:#fff; }
+
+    /* ── MUSIC PLAYER ── */
+    #music-section { padding-top:0; }
+    .playlist-wrap { display:grid; grid-template-columns:1fr 340px; gap:2px; background:var(--blue-border); border:1px solid var(--blue-border); }
+    .playlist-player { background:var(--bg2); display:flex; flex-direction:column; }
+    .vid-player-wrap { position:relative; width:100%; aspect-ratio:16/9; background:#000; overflow:hidden; }
+    .vid-player-wrap iframe { position:absolute; inset:0; width:100%; height:100%; border:none; }
+    .now-playing { display:flex; align-items:center; gap:14px; padding:14px 18px; border-top:1px solid var(--blue-border); background:var(--surface); flex-wrap:wrap; }
+    .np-info { flex:1; min-width:0; }
+    .np-title { font-family:'Playfair Display',serif; font-weight:700; font-size:19px; line-height:1.1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .np-btn { background:none; border:1px solid var(--border); color:var(--text); font-size:13px; width:34px; height:34px; display:flex; align-items:center; justify-content:center; cursor:none; transition:all .3s; }
+    .np-btn.play-pause { background:var(--blue); color:#fff; border-color:var(--blue); }
+
+    /* sidebar */
+    .playlist-sidebar { background:var(--surface); display:flex; flex-direction:column; overflow:hidden; }
+    .pl-track { display:flex; align-items:center; gap:12px; padding:12px 16px; border-bottom:1px solid var(--border); cursor:none; transition:background .2s; position:relative; }
+    .pl-track.active { background:rgba(59,107,158,0.08); }
+    .pl-track-title { font-family:'EB Garamond',serif; font-size:13px; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .pl-interact-toggle { background:none; border:none; cursor:none; color:var(--muted); font-size:11px; display:flex; align-items:center; gap:4px; padding:2px 6px; }
+    .pl-interact-toggle:hover { color:var(--blue-light); }
+    .pl-interact-count { font-family:'Cinzel',serif; font-size:7px; letter-spacing:2px; }
+
+    /* ── NEXT-LEVEL INTERACTION PANEL ── */
+    .track-interact {
+      border-top: 1px solid var(--blue-border);
+      background: linear-gradient(to bottom, var(--bg), var(--surface));
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 0.6s cubic-bezier(0.33, 1, 0.68, 1);
+      position: relative;
+    }
+    .track-interact.open { max-height: 800px; border-bottom: 1px solid var(--blue-border); }
+    .interact-inner { padding: 20px; }
+    .interact-stats {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px; padding-bottom: 15px;
+      border-bottom: 1px solid var(--blue-border);
+    }
+    .btn-heart {
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+      color: var(--text-dim); padding: 8px 18px; border-radius: 4px;
+      cursor: none; display: flex; align-items: center; gap: 10px;
+      font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 2px;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .btn-heart.active { 
+        background: rgba(122,31,31,0.15); border-color: var(--crimson); 
+        color: #ff4d4d; box-shadow: 0 0 15px rgba(122,31,31,0.2);
+    }
+    .btn-heart .icon-h { font-size: 16px; transition: transform 0.3s; }
+    .btn-heart.active .icon-h { transform: scale(1.2) rotate(-10deg); }
+
+    .comm-scroll {
+      max-height: 300px; overflow-y: auto; padding-right: 10px;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .comm-bubble {
+      background: var(--surface2); border: 1px solid var(--border);
+      padding: 12px 16px; border-radius: 2px 12px 12px 12px;
+      animation: commIn 0.5s ease-out forwards;
+    }
+    @keyframes commIn { from { opacity:0; transform:translateX(-10px); } to { opacity:1; transform:translateX(0); } }
+    .comm-meta { display: flex; justify-content: space-between; font-family: 'Cinzel', serif; font-size: 8px; margin-bottom: 5px; }
+    .comm-user { color: var(--blue-glint); font-weight: 700; letter-spacing: 2px; }
+    .comm-time { color: var(--muted); font-style: italic; }
+    .comm-text { font-family: 'EB Garamond', serif; font-size: 14px; color: var(--text); line-height: 1.5; }
+    
+    .comm-input-area { margin-top: 20px; display: grid; grid-template-columns: 140px 1fr 100px; gap: 10px; }
+    .modern-input { background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 12px; font-family: 'EB Garamond', serif; transition: 0.3s; }
+    .modern-input:focus { border-color: var(--blue); outline: none; }
+    .modern-input.user-input { font-family: 'Cinzel', serif; font-size: 9px; }
+    .btn-send { background: var(--blue); color: #fff; border: none; font-family: 'Cinzel', serif; font-size: 9px; font-weight: 700; letter-spacing: 2px; cursor: none; }
+    .btn-send:hover { background: var(--blue-light); }
+
+    /* ── PRODUCTS ── */
+    #products { background:var(--surface); border-top:1px solid var(--blue-border); }
+    .products-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr)); gap:2px; background:var(--blue-border); }
+    .pcard { background:var(--bg2); padding:28px; position:relative; overflow:hidden; transition:transform .3s; cursor:none; }
+    .pbadge { position:absolute; top:16px; right:16px; font-family:'Cinzel',serif; font-size:7px; padding:5px 12px; text-transform:uppercase; letter-spacing:2px; }
+    .pbadge.hot { background:var(--crimson); color:#fff; }
+    .price-amount { font-family:'Cinzel Decorative',serif; font-weight:900; font-size:34px; color:var(--gold); }
+    .feat { font-family:'EB Garamond',serif; font-size:13px; color:var(--text-dim); display:flex; gap:8px; margin-bottom:4px; }
+    .feat::before { content:'◈'; color:var(--blue); }
+    .pcta { display:block; text-align:center; font-family:'Cinzel',serif; font-size:10px; font-weight:700; letter-spacing:3px; padding:15px; border:1px solid var(--blue-light); color:var(--blue-light); text-decoration:none; margin-top:20px; transition:0.3s; }
+    .pcta:hover { background:var(--blue); color:#fff; }
+
+    /* ── GUARANTEE ── */
+    .guarantee-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:2px; background:var(--blue-border); border:1px solid var(--blue-border); }
+    .gitem { background:var(--surface); padding:28px 24px; }
+    .g-title { font-family:'Cinzel',serif; font-size:10px; color:var(--blue-light); letter-spacing:2px; text-transform:uppercase; margin-bottom:8px; }
+    .g-desc { font-family:'EB Garamond',serif; font-style:italic; font-size:13px; color:var(--text-dim); line-height:1.7; }
+
+    /* channel promo */
+    .ch-card { border:1px solid var(--blue-border); padding:52px 56px; display:flex; justify-content:space-between; align-items:center; background:linear-gradient(135deg,var(--blue-mist),transparent); }
+    .ch-left h2 { font-family:'Cinzel Decorative',serif; font-size:42px; line-height:1; }
+    .ch-btn { font-family:'Cinzel',serif; font-size:9px; letter-spacing:3px; padding:14px 28px; text-decoration:none; cursor:none; display:inline-block; transition:0.3s; }
+    .ch-btn.p { background:var(--blue); color:#fff; }
+
+    /* FAQ */
+    .faq-list { display:grid; grid-template-columns:1fr 1fr; gap:2px; background:var(--blue-border); }
+    .faq-item { background:var(--bg2); padding:24px 28px; }
+    .faq-q { font-family:'Playfair Display',serif; font-style:italic; font-size:15px; margin-bottom:10px; }
+
+    /* Responsive */
+    @media(max-width:960px) {
+      .casino-layout,.playlist-wrap,.faq-list,.comm-input-area { grid-template-columns:1fr; }
+      .nav-links,.nav-order { display:none; }
+      .nav-ham { display:flex; }
+      section { padding:40px 24px; }
+    }
+
+    .fiu { opacity:0; transform:translateY(28px); transition:0.8s ease; }
+    .fiu.vis { opacity:1; transform:translateY(0); }
+  </style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="cur-ring"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-back">← Portfolio</a>
+  <a href="store.html" class="nav-logo">A.S.T.A.™ <span class="sub">TECH</span></a>
+  <div class="nav-right">
+    <a href="https://wa.me/254769279076" target="_blank" class="nav-order">Order Now</a>
+    <button class="nav-ham" onclick="toggleMob()"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<div id="mob-menu">
+  <a href="index.html" onclick="toggleMob()">← Portfolio</a>
+  <a href="#products" onclick="toggleMob()">Products</a>
+  <a href="https://wa.me/254769279076" target="_blank">Order on WhatsApp</a>
+</div>
+
+<!-- HERO -->
+<section id="store-hero">
+  <div class="hero-atm"></div>
+  <div class="sh-watermark">STORE</div>
+  <div class="sh-eyebrow">A.S.T.A.™ TECH — Nairobi, Kenya 🇰🇪</div>
+  <div class="sh-title">THE<br><span class="accent">STORE</span></div>
+  <div class="sh-rule"></div>
+  <p class="sh-sub">WhatsApp bots. Pterodactyl panels. Dev tools.<br><strong>Pay after service</strong> — because trust goes both ways.</p>
+  <div class="trust-strip">
+    <div class="trust-item"><span class="ti">◈</span> Pay After Service</div>
+    <div class="trust-item"><span class="ti">◈</span> Same Day Setup</div>
+    <div class="trust-item"><span class="ti">◈</span> 24/7 WhatsApp Support</div>
+  </div>
+</section>
+
+<!-- SECTION I: CASINO -->
+<section id="casino-section" class="fiu">
+  <div class="sec-head">
+    <span class="sec-num">I</span>
+    <div class="sec-rule sec-rule-l"></div>
+    <span class="sec-title">Spin The Dial</span>
+    <div class="sec-rule sec-rule-r"></div>
+    <span class="sec-gem">◈</span>
+  </div>
+  <div class="casino-layout">
+    <div class="casino-machine">
+      <div class="casino-header">
+        <span class="casino-label">Random Pick</span>
+      </div>
+      <div class="casino-window-wrap">
+        <div class="casino-crosshair"></div>
+        <div id="casino-reel"></div>
+      </div>
+      <div class="casino-controls" style="padding:20px; display:flex; align-items:center; gap:16px;">
+        <button id="spin-btn" onclick="doSpin()">SPIN THE DIAL</button>
+        <div class="casino-result" id="casino-result">Let fate choose your next track.</div>
+      </div>
+    </div>
+    <div class="top-pick-panel">
+      <img id="top-pick-thumb" src="" alt="Top Pick">
+      <div style="padding:20px; flex:1;">
+        <div style="font-family:Cinzel; font-size:7px; color:var(--gold); margin-bottom:5px;">TOP PICK</div>
+        <div id="top-pick-title" style="font-family:Playfair Display; font-size:22px;">Loading...</div>
+        <div id="top-pick-artist" style="font-family:EB Garamond; font-style:italic; color:var(--muted);">Please wait</div>
+      </div>
+      <button class="tp-play-link" id="top-pick-play-btn">Play Now ↗</button>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION II: MUSIC & INTERACTIONS -->
+<section id="music-section" class="fiu">
+  <div class="sec-head">
+    <div class="sec-rule sec-rule-l"></div>
+    <span class="sec-title">Now Playing</span>
+    <div class="sec-rule sec-rule-r"></div>
+  </div>
+  <div class="playlist-wrap">
+    <div class="playlist-player">
+      <div class="vid-player-wrap">
+        <iframe id="yt-frame" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      </div>
+      <div class="now-playing">
+        <div class="np-info">
+          <div id="np-title" class="np-title">—</div>
+          <div id="np-artist" style="font-family:EB Garamond; font-style:italic; font-size:12px; color:var(--muted);">—</div>
+        </div>
+        <div class="np-controls" style="display:flex; gap:6px;">
+          <button class="np-btn" onclick="PLAYER.prev()">⏮</button>
+          <button class="np-btn play-pause" id="btn-playpause" onclick="PLAYER.togglePlay()">⏸</button>
+          <button class="np-btn" onclick="PLAYER.next()">⏭</button>
+        </div>
+      </div>
+    </div>
+    <div class="playlist-sidebar">
+      <div class="pl-header" style="padding:14px; border-bottom:1px solid var(--blue-border); font-family:Cinzel; font-size:9px;">◈ PLAYLIST</div>
+      <div id="pl-sidebar-rows"></div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION III: PRODUCTS -->
+<section id="products" class="fiu">
+  <div class="sec-head"><span class="sec-num">II</span><div class="sec-rule sec-rule-l"></div><span class="sec-title">The Products</span><div class="sec-rule sec-rule-r"></div></div>
+  <div class="products-grid">
+    <div class="pcard">
+      <div class="pbadge hot">Best Seller</div>
+      <div style="font-family:Playfair Display; font-size:24px;">WhatsApp Bot</div>
+      <div class="price-amount">KSH 100</div>
+      <div style="margin:15px 0;">
+        <div class="feat">Auto View Status</div>
+        <div class="feat">Recover Deleted Msgs</div>
+        <div class="feat">Download Songs/IG/YT</div>
+        <div class="feat">AI Features (ChatGPT)</div>
+      </div>
+      <a href="https://wa.me/254769279076" target="_blank" class="pcta">Order Bot → WhatsApp</a>
+    </div>
+    <div class="pcard">
+      <div style="font-family:Playfair Display; font-size:24px;">Pterodactyl Panels</div>
+      <div class="price-amount">DM US</div>
+      <div style="margin:15px 0;">
+        <div class="feat">Bot Hosting Servers</div>
+        <div class="feat">Full Setup & Support</div>
+        <div class="feat">African Market Prices</div>
+      </div>
+      <a href="https://wa.me/254769279076" target="_blank" class="pcta">DM for Pricing</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER STUFF -->
+<section id="guarantee" class="fiu">
+  <div class="guarantee-grid">
+    <div class="gitem"><div class="g-title">Pay After Service</div><div class="g-desc">Verify it works, then pay. Zero risk.</div></div>
+    <div class="gitem"><div class="g-title">Same Day Delivery</div><div class="g-desc">Most orders live within hours.</div></div>
+    <div class="gitem"><div class="g-title">Local Support</div><div class="g-desc">Talk to a human in Nairobi directly.</div></div>
+  </div>
+</section>
+
+<section id="channel-promo" class="fiu">
+  <div class="ch-card">
+    <div class="ch-left"><h2>FOLLOW THE<br><span style="color:var(--blue-light)">CHANNEL</span></h2></div>
+    <a href="https://whatsapp.com/channel/0029VavpWUvGk1Fkbzz0vz0v" target="_blank" class="ch-btn p">Follow WhatsApp Channel</a>
+  </div>
+</section>
+
+<div class="sbar">
+  <div><span class="pdot"></span><span class="hi">A.S.T.A.™ TECH</span> — Nairobi</div>
+  <a href="index.html" style="color:var(--muted); text-decoration:none;">← PORTFOLIO</a>
+</div>
+
+<!-- SCRIPTS -->
+<script src="music/config.js"></script>
+<script src="music/casino.js"></script>
+<script src="music/player.js"></script>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+
+<script>
+/**
+ * A.S.T.A™ INTERACTION ENGINE v2.0
+ */
+const ASTA_USER = {
+    get name() { return localStorage.getItem('asta_username') || ''; },
+    set name(val) { localStorage.setItem('asta_username', val); },
+    getLiked() { return JSON.parse(localStorage.getItem('asta_liked_v2') || '{}'); },
+    setLiked(id, status) {
+        const liked = this.getLiked();
+        if(status) liked[id] = true; else delete liked[id];
+        localStorage.setItem('asta_liked_v2', JSON.stringify(liked));
+    }
+};
+
+let db;
+try {
+    firebase.initializeApp(window.FIREBASE_CONFIG);
+    db = firebase.database();
+} catch(e) { console.error("Firebase Error", e); }
+
+function relTime(iso) {
+    if(!iso) return '';
+    const s = Math.floor((new Date() - new Date(iso)) / 1000);
+    if(s < 60) return 'Just now';
+    if(s < 3600) return Math.floor(s/60) + 'm ago';
+    if(s < 86400) return Math.floor(s/3600) + 'h ago';
+    return new Date(iso).toLocaleDateString();
+}
+
+const InteractionManager = {
+    toggle: function(idx) {
+        const panel = document.getElementById(`panel-${idx}`);
+        const isOpen = panel.classList.contains('open');
+        document.querySelectorAll('.track-interact').forEach(p => p.classList.remove('open'));
+        if(!isOpen) panel.classList.add('open');
+    },
+
+    like: function(idx, trackId) {
+        const btn = document.getElementById(`lk-btn-${idx}`);
+        const countEl = document.getElementById(`lk-cnt-${idx}`);
+        const currentLiked = ASTA_USER.getLiked()[trackId];
+        
+        let currentVal = parseInt(countEl.innerText) || 0;
+        if(currentLiked) {
+            currentVal--; btn.classList.remove('active');
+            btn.querySelector('.icon-h').innerText = '♡';
+            ASTA_USER.setLiked(trackId, false);
+        } else {
+            currentVal++; btn.classList.add('active');
+            btn.querySelector('.icon-h').innerText = '♥';
+            ASTA_USER.setLiked(trackId, true);
+        }
+        countEl.innerText = currentVal;
+        db.ref(`tracks/${trackId}/likes`).transaction(v => currentLiked ? (v || 1) - 1 : (v || 0) + 1);
+    },
+
+    post: async function(idx, trackId) {
+        const nameInp = document.getElementById(`name-${idx}`);
+        const textInp = document.getElementById(`text-${idx}`);
+        const btn = document.getElementById(`send-${idx}`);
+        const name = nameInp.value.trim() || "Anonymous";
+        const text = textInp.value.trim();
+        if(!text) return;
+        
+        ASTA_USER.name = name;
+        btn.disabled = true;
+
+        try {
+            await db.ref(`tracks/${trackId}/comments`).push({
+                user: name, text: text, timestamp: new Date().toISOString()
+            });
+            textInp.value = "";
+        } catch(e) { console.error(e); }
+        btn.disabled = false;
+    },
+
+    renderPanel: function(idx, trackId) {
+        const isLiked = !!ASTA_USER.getLiked()[trackId];
+        return `
+            <div class="track-interact" id="panel-${idx}">
+                <div class="interact-inner">
+                    <div class="interact-stats">
+                        <button class="btn-heart ${isLiked?'active':''}" id="lk-btn-${idx}" onclick="InteractionManager.like(${idx}, '${trackId}')">
+                            <span class="icon-h">${isLiked?'♥':'♡'}</span> <span id="lk-cnt-${idx}">0</span>
+                        </button>
+                        <div id="cm-cnt-${idx}" style="font-family:Cinzel; font-size:8px;">0 COMMENTS</div>
+                    </div>
+                    <div class="comm-scroll" id="scroll-${idx}"><div style="padding:10px; color:var(--muted);">Loading...</div></div>
+                    <div class="comm-input-area">
+                        <input type="text" id="name-${idx}" class="modern-input user-input" placeholder="NAME" value="${ASTA_USER.name}">
+                        <input type="text" id="text-${idx}" class="modern-input" placeholder="Comment...">
+                        <button id="send-${idx}" class="btn-send" onclick="InteractionManager.post(${idx}, '${trackId}')">POST</button>
+                    </div>
+                </div>
+            </div>`;
+    },
+
+    initListeners: function(idx, trackId) {
+        db.ref(`tracks/${trackId}/likes`).on('value', snap => {
+            const val = snap.val() || 0;
+            const el = document.getElementById(`lk-cnt-${idx}`);
+            if(el) el.innerText = val;
+            const side = document.getElementById(`ic-${idx}`);
+            if(side) side.innerText = val || '';
+        });
+        db.ref(`tracks/${trackId}/comments`).on('value', snap => {
+            const container = document.getElementById(`scroll-${idx}`);
+            const data = snap.val();
+            if(!data) { 
+                container.innerHTML = `<div style="font-size:12px; color:var(--muted); text-align:center;">No comments yet.</div>`;
+                return; 
+            }
+            const list = Object.values(data).sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
+            document.getElementById(`cm-cnt-${idx}`).innerText = `${list.length} COMMENTS`;
+            container.innerHTML = list.map(c => `
+                <div class="comm-bubble">
+                    <div class="comm-meta"><span class="comm-user">${c.user}</span><span class="comm-time">${relTime(c.timestamp)}</span></div>
+                    <div class="comm-text">${c.text}</div>
+                </div>`).join('');
+            container.scrollTop = container.scrollHeight;
+        });
+    }
+};
+
+function attachPanels() {
+    const tracks = (window.MUSIC && window.MUSIC.PLAYLIST) || [];
+    tracks.forEach((t, i) => {
+        const row = document.getElementById(`vt-${i}`);
+        if(!row) return;
+        const toggleBtn = document.createElement('button');
+        toggleBtn.className = 'pl-interact-toggle';
+        toggleBtn.innerHTML = `<span>💬</span><span class="pl-interact-count" id="ic-${i}"></span>`;
+        toggleBtn.onclick = (e) => { e.stopPropagation(); InteractionManager.toggle(i); };
+        row.insertBefore(toggleBtn, row.querySelector('.pl-num'));
+        row.insertAdjacentHTML('afterend', InteractionManager.renderPanel(i, t.id));
+        InteractionManager.initListeners(i, t.id);
+    });
+}
+
+// UI HANDLERS
+const cur=document.getElementById('cur'),ring=document.getElementById('cur-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx-3.5+'px';cur.style.top=my-3.5+'px';});
+(function ar(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;ring.style.left=rx-15+'px';ring.style.top=ry-15+'px';requestAnimationFrame(ar);})();
+function toggleMob(){ document.getElementById('mob-menu').classList.toggle('open'); }
+const io=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('vis');}),{threshold:.07});
+document.querySelectorAll('.fiu').forEach(el=>io.observe(el));
+
+function doSpin() {
+    const btn = document.getElementById('spin-btn');
+    const result = document.getElementById('casino-result');
+    const tracks = window.MUSIC.PLAYLIST;
+    const targetIdx = Math.floor(Math.random() * tracks.length);
+    btn.disabled = true; result.textContent = 'Spinning...';
+    CASINO.spin(document.getElementById('casino-reel'), targetIdx, (idx) => {
+        const t = tracks[idx];
+        result.textContent = `Landed on: ${t.title}`;
+        btn.disabled = false;
+        setTimeout(() => PLAYER.switchTo(idx), 500);
+    });
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    PLAYER.init();
+    CASINO.buildReel(document.getElementById('casino-reel'));
+    setTimeout(attachPanels, 150);
+});
+</script>
+</body>
+</html>
