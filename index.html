@@ -426,21 +426,293 @@
   </div>
 </section>
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Section</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0a;
+    --ink: #f0ece4;
+    --accent: #c8a96e;
+    --mute: #3a3a3a;
+    --line: rgba(200,169,110,0.2);
+  }
+
+  body {
+    background: var(--bg);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* Grain overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0.6;
+  }
+
+  #contact {
+    width: 100%;
+    max-width: 900px;
+    padding: 80px 48px;
+    position: relative;
+  }
+
+  /* Corner marks */
+  #contact::before, #contact::after {
+    content: '';
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    border-color: var(--accent);
+    border-style: solid;
+    opacity: 0.5;
+  }
+  #contact::before {
+    top: 40px; left: 24px;
+    border-width: 1px 0 0 1px;
+  }
+  #contact::after {
+    bottom: 40px; right: 24px;
+    border-width: 0 1px 1px 0;
+  }
+
+  .contact-inner {
+    display: grid;
+    grid-template-rows: auto auto auto;
+    gap: 52px;
+  }
+
+  /* Eyebrow label */
+  .contact-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: var(--accent);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards;
+  }
+  .contact-eyebrow::before {
+    content: '';
+    width: 40px;
+    height: 1px;
+    background: var(--accent);
+    opacity: 0.6;
+  }
+
+  /* Headline */
+  .contact-headline {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(2.8rem, 6vw, 5.2rem);
+    line-height: 1.08;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.15s ease forwards;
+  }
+  .contact-headline em {
+    font-style: italic;
+    color: var(--accent);
+    position: relative;
+    display: inline-block;
+  }
+  /* Underline stroke on accent */
+  .contact-headline em::after {
+    content: '';
+    position: absolute;
+    bottom: 4px; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+    transform: scaleX(0);
+    transform-origin: left;
+    animation: lineIn 0.6s 1.1s ease forwards;
+  }
+
+  /* Status strip */
+  .contact-sub {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 10.5px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #6b6b6b;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.3s ease forwards;
+  }
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #4caf6e;
+    box-shadow: 0 0 8px #4caf6e;
+    animation: pulse 2.4s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+
+  /* Channels */
+  .contact-channels {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    opacity: 0;
+    animation: fadeUp 0.8s 0.5s ease forwards;
+  }
+
+  .ch {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 28px 24px 22px;
+    background: var(--bg);
+    text-decoration: none;
+    color: var(--ink);
+    overflow: hidden;
+    transition: background 0.3s ease;
+    cursor: pointer;
+  }
+
+  /* Channel index numbers */
+  .ch::before {
+    content: attr(data-num);
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--mute);
+    margin-bottom: 28px;
+    display: block;
+    transition: color 0.3s ease;
+  }
+
+  /* Arrow icon */
+  .ch-arrow {
+    display: block;
+    width: 20px;
+    height: 20px;
+    margin-top: 16px;
+    opacity: 0.3;
+    transition: opacity 0.3s, transform 0.3s ease;
+  }
+
+  .ch span {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 400;
+    font-size: 1.3rem;
+    letter-spacing: 0.02em;
+    transition: color 0.3s ease;
+  }
+
+  /* Fill sweep on hover */
+  .ch::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    transform: translateY(100%);
+    transition: transform 0.4s cubic-bezier(0.76,0,0.24,1);
+    z-index: 0;
+  }
+  .ch:hover::after { transform: translateY(0); }
+  .ch:hover { background: var(--bg); }
+  .ch:hover span { color: var(--bg); }
+  .ch:hover::before { color: rgba(10,10,10,0.5); }
+  .ch:hover .ch-arrow { opacity: 1; transform: translate(3px,-3px); filter: invert(1); }
+
+  .ch > * { position: relative; z-index: 1; }
+
+  /* Divider line between channels */
+  .ch + .ch { border-left: 1px solid var(--line); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes lineIn {
+    to { transform: scaleX(1); }
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 8px #4caf6e; }
+    50%       { opacity: 0.5; box-shadow: 0 0 3px #4caf6e; }
+  }
+
+  @media (max-width: 640px) {
+    #contact { padding: 60px 24px; }
+    .contact-channels { grid-template-columns: repeat(2, 1fr); }
+    .contact-channels .ch:nth-child(n+3) { border-top: 1px solid var(--line); }
+    .contact-channels .ch:nth-child(2n+1) { border-left: none; }
+  }
+</style>
+</head>
+<body>
+
 <section id="contact">
   <div class="contact-inner fiu">
+
+    <div class="contact-eyebrow">Let's build something</div>
+
     <div class="contact-headline">
-      The right developer doesn't just write code —<br>
-      they <span>change outcomes.</span>
+      The right developer<br>
+      doesn't just write code —<br>
+      they <em>change outcomes.</em>
     </div>
-    <div class="contact-sub">Open to commissions · Remote · Available now</div>
+
+    <div class="contact-sub">
+      <span class="status-dot"></span>
+      Open to commissions &nbsp;·&nbsp; Remote &nbsp;·&nbsp; Available now
+    </div>
+
     <div class="contact-channels">
-      <a href="https://wa.me/254769279076" class="ch" target="_blank"><span>WhatsApp</span></a>
-      <a href="mailto:david.kiama@example.com" class="ch"><span>Email</span></a>
-      <a href="store.html" class="ch"><span>The Store</span></a>
-      <a href="https://github.com/" class="ch" target="_blank"><span>GitHub</span></a>
+      <a href="https://wa.me/254769279076" class="ch" target="_blank" data-num="01">
+        <span>WhatsApp</span>
+        <svg class="ch-arrow" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M4 16L16 4M16 4H8M16 4V12"/>
+        </svg>
+      </a>
+      <a href="https://instagram.com/_kiamadavid" class="ch" target="_blank" data-num="02">
+        <span>Instagram</span>
+        <svg class="ch-arrow" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M4 16L16 4M16 4H8M16 4V12"/>
+        </svg>
+      </a>
+      <a href="store.html" class="ch" data-num="03">
+        <span>The Store</span>
+        <svg class="ch-arrow" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M4 16L16 4M16 4H8M16 4V12"/>
+        </svg>
+      </a>
+      <a href="https://github.com/" class="ch" target="_blank" data-num="04">
+        <span>GitHub</span>
+        <svg class="ch-arrow" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M4 16L16 4M16 4H8M16 4V12"/>
+        </svg>
+      </a>
     </div>
+
   </div>
 </section>
+
+</body>
+</html>
+
 
 <div class="sbar">
   <span id="sbar-vis">Observing your passage…</span>
