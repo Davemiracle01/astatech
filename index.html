@@ -537,9 +537,208 @@
     .wk:hover .wk-arrow { color: var(--crimson); transform: translate(4px,-4px); }
 
     /* ═══ DEPLOY ═══ */
+    /* ═══ SCROLL PROGRESS ═══ */
+    #scroll-prog {
+      position: fixed; top: 0; left: 0; z-index: 9999;
+      height: 2px; width: 0%;
+      background: linear-gradient(90deg, var(--crimson), var(--amber));
+      transition: width .1s linear;
+      pointer-events: none;
+    }
+
+    /* ═══ BACK TO TOP ═══ */
+    #btt {
+      position: fixed; bottom: 52px; right: 52px; z-index: 700;
+      width: 44px; height: 44px;
+      border: 1px solid var(--line2);
+      background: var(--ink3);
+      color: var(--chalk3);
+      font-family: 'Syne Mono', monospace;
+      font-size: 14px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: none;
+      opacity: 0; pointer-events: none;
+      transition: opacity .4s, background .3s, border-color .3s, color .3s;
+    }
+    #btt.show { opacity: 1; pointer-events: all; }
+    #btt:hover { background: var(--crimson); border-color: var(--crimson); color: #fff; }
+
+    /* ═══ STATS SECTION ═══ */
+    #stats {
+      background: var(--ink);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      padding: 80px 52px;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 2px;
+    }
+    .stat-card {
+      padding: 40px 28px;
+      border: 1px solid var(--line);
+      background: var(--ink2);
+      text-align: center;
+      position: relative; overflow: hidden;
+      transition: background .4s, border-color .4s;
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--crimson), var(--amber));
+      transform: scaleX(0); transform-origin: left;
+      transition: transform .55s ease;
+    }
+    .stat-card:hover::before { transform: scaleX(1); }
+    .stat-card:hover { background: var(--ink3); border-color: rgba(232,50,26,.2); }
+    .stat-num {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(36px, 5vw, 64px);
+      color: var(--chalk);
+      line-height: 1;
+      letter-spacing: -2px;
+    }
+    .stat-num .stat-acc { color: var(--crimson); }
+    .stat-label {
+      font-family: 'Syne Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--chalk4);
+      margin-top: 10px;
+    }
+
+    /* ═══ DEPLOY / FREE BOTS ═══ */
     #deploy { background: var(--ink2); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 
     .deploy-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2px; }
+
+    /* ═══ SKILLI ═══ */
+    .skilli-hero {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      position: relative;
+    }
+    .skilli-glow {
+      position: absolute; top: 50%; left: 25%;
+      width: 400px; height: 400px;
+      background: radial-gradient(ellipse, rgba(232,50,26,.07) 0%, transparent 70%);
+      transform: translate(-50%,-50%);
+      pointer-events: none;
+    }
+    .skilli-left {
+      background: var(--ink3);
+      border: 1px solid var(--line);
+      padding: 52px;
+      display: flex; flex-direction: column;
+      position: relative; overflow: hidden;
+      transition: border-color .4s;
+    }
+    .skilli-left:hover { border-color: rgba(232,50,26,.3); }
+    .skilli-badge {
+      background: linear-gradient(90deg, var(--crimson), var(--amber)) !important;
+      margin-bottom: 24px;
+    }
+    .skilli-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(48px, 6vw, 80px);
+      color: var(--chalk);
+      letter-spacing: -3px;
+      line-height: 1;
+      margin-bottom: 20px;
+    }
+    .skilli-sub {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 16px;
+      color: var(--chalk3);
+      line-height: 1.8;
+      margin-bottom: 32px;
+      flex: 1;
+    }
+    .skilli-features {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      margin-bottom: 40px;
+    }
+    .sf {
+      font-family: 'Syne Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: var(--chalk3);
+      border: 1px solid var(--line2);
+      padding: 5px 12px;
+      transition: border-color .3s, color .3s;
+    }
+    .sf:hover { border-color: var(--crimson); color: var(--chalk); }
+    .skilli-cta {
+      display: block;
+      position: relative;
+      overflow: hidden;
+      text-decoration: none;
+    }
+    .skilli-cta-inner {
+      display: flex;
+      align-items: center; justify-content: space-between;
+      padding: 18px 24px;
+      background: var(--crimson);
+      font-family: 'Syne Mono', monospace;
+      font-size: 11px; letter-spacing: 4px;
+      color: #fff;
+      position: relative; z-index: 1;
+      transition: background .3s;
+    }
+    .skilli-cta:hover .skilli-cta-inner { background: var(--crim2); }
+    .skilli-arrow {
+      font-size: 18px;
+      transition: transform .3s;
+    }
+    .skilli-cta:hover .skilli-arrow { transform: translate(4px,-4px); }
+    .skilli-cta-glow {
+      position: absolute; inset: 0;
+      background: rgba(255,79,51,.25);
+      opacity: 0;
+      transition: opacity .3s;
+    }
+    .skilli-cta:hover .skilli-cta-glow { opacity: 1; }
+
+    .skilli-right {
+      background: var(--ink4);
+      border: 1px solid var(--line);
+      display: flex; align-items: stretch;
+      overflow: hidden;
+    }
+    .skilli-preview {
+      width: 100%; display: flex; flex-direction: column;
+    }
+    .sp-bar {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 16px;
+      background: var(--ink3);
+      border-bottom: 1px solid var(--line);
+      flex-shrink: 0;
+    }
+    .sp-dots { display: flex; gap: 6px; }
+    .sp-dots span {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--chalk4);
+    }
+    .sp-dots span:first-child { background: #ff5f57; }
+    .sp-dots span:nth-child(2) { background: #febc2e; }
+    .sp-dots span:last-child { background: #28c840; }
+    .sp-url {
+      font-family: 'Syne Mono', monospace;
+      font-size: 9px; color: var(--chalk4);
+      letter-spacing: 2px;
+    }
+    .skilli-preview iframe {
+      width: 100%; flex: 1; min-height: 480px;
+      border: none; display: block;
+      background: var(--ink4);
+    }
 
     .dep-card {
       background: var(--ink3); border: 1px solid var(--line);
@@ -806,6 +1005,11 @@
       #hero, section, #contact { padding-left: 24px; padding-right: 24px; }
       #hero { padding-bottom: 72px; }
       section { padding-top: 70px; padding-bottom: 70px; }
+      .skilli-hero { grid-template-columns: 1fr; }
+      .skilli-preview iframe { min-height: 320px; }
+      .skilli-left { padding: 32px; }
+      #btt { right: 20px; bottom: 48px; }
+      #stats { padding: 60px 20px; }
       #vcard { margin: 0 24px; }
       .divider { padding: 0 24px; }
       .hero-stamp { right: 24px; top: 82px; width: 90px; height: 90px; }
@@ -826,40 +1030,42 @@
   <div class="sec-head fiu">
     <span class="sec-num">IV</span>
     <div class="sec-rule"></div>
-    <span class="sec-title">Spider Symbiote — Deploy</span>
+    <span class="sec-title">Free Bots</span>
     <div class="sec-rule"></div>
     <span class="sec-dot">◆</span>
   </div>
-  <div class="deploy-grid">
-    <div class="dep-card fiu">
-      <span class="dep-badge">V3 — Latest</span>
-      <div class="dep-title">🕸️ Spider Symbiote V3</div>
-      <div class="dep-sub"> free Whatsapp bot pairing site, instant deployment. V3 is the most stable and feature-complete release.</div>
-      <ol class="dep-steps">
-        <li data-n="1">Click Open Panel below — new tab opens.</li>
-        <li data-n="2">Create account (username, email, password) if new.</li>
-        <li data-n="3"> log in to the dashboard.</li>
-        <li data-n="4">🕸️ <strong>Spider Symbiote</strong>🕷️</li>
-        <li data-n="5">Hit Deploy — wait for install, usually fast.</li>
-        <li data-n="6">Control, monitor &amp; upgrade from the panel.</li>
-      </ol>
-      <a href="http://38.242.251.177:2010/" target="_blank" class="dep-link" rel="noopener noreferrer">
-        🚀 OPEN V3 PAIRING SITE<span>Recommended →</span>
+
+  <!-- SKILLI FEATURED BOT -->
+  <div class="skilli-hero fiu">
+    <div class="skilli-glow"></div>
+    <div class="skilli-left">
+      <span class="dep-badge skilli-badge">✦ FREE — LIVE NOW</span>
+      <div class="skilli-title">Skilli</div>
+      <div class="skilli-sub">A powerful WhatsApp bot packed with features — available for free. No setup fees. No hidden costs. Just connect and go.</div>
+      <div class="skilli-features">
+        <span class="sf">⚡ Instant Deploy</span>
+        <span class="sf">🤖 AI Powered</span>
+        <span class="sf">🌍 Multi-Language</span>
+        <span class="sf">🎮 Games &amp; Fun</span>
+        <span class="sf">📸 Media Tools</span>
+        <span class="sf">🛡️ Group Manager</span>
+      </div>
+      <a href="https://skilli-md.vercel.app/" target="_blank" class="skilli-cta" rel="noopener noreferrer">
+        <span class="skilli-cta-inner">
+          <span>LAUNCH SKILLI</span>
+          <span class="skilli-arrow">↗</span>
+        </span>
+        <div class="skilli-cta-glow"></div>
       </a>
     </div>
-    <div class="dep-card fiu" style="transition-delay:.15s">
-      <span class="dep-badge amber">V2 — Stable</span>
-      <div class="dep-title">🕷️ Spider Symbiote V2</div>
-      <div class="dep-sub">The previous generation — still stable and functional. Use V2 as a fallback if V3 is undergoing maintenance or if you prefer the older interface.</div>
-      <ol class="dep-steps">
-        <li data-n="1">Click Open Panel below — new tab opens.</li>
-        <li data-n="2">Same process as V3: account → verify → login.</li>
-        <li data-n="3">Locate Spider Symbiote in the bot catalogue.</li>
-        <li data-n="4">FREE DEPLOYMENT.</li>
-      </ol>
-      <a href="https://gabibot-3635e0847d8d.herokuapp.com/" target="_blank" class="dep-link" rel="noopener noreferrer">
-        🕷️ OPEN V2 PAIRING SITE <span>Fallback →</span>
-      </a>
+    <div class="skilli-right">
+      <div class="skilli-preview">
+        <div class="sp-bar">
+          <div class="sp-dots"><span></span><span></span><span></span></div>
+          <span class="sp-url">skilli-md.vercel.app</span>
+        </div>
+        <iframe src="https://skilli-md.vercel.app/" title="Skilli Bot" scrolling="yes" loading="lazy"></iframe>
+      </div>
     </div>
   </div>
 </section>
@@ -867,6 +1073,11 @@
 <div class="divider fiu">· · · ◆ · · ·</div>
 
 
+
+<!-- SCROLL PROGRESS -->
+<div id="scroll-prog"></div>
+<!-- BACK TO TOP -->
+<button id="btt" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">↑</button>
 
 <!-- INTRO -->
 <div id="intro">
@@ -897,7 +1108,7 @@
     <li><a href="#manifesto">Chronicle</a></li>
     <li><a href="#arsenal">Arsenal</a></li>
     <li><a href="#works">Works</a></li>
-    <li><a href="#deploy">Deploy</a></li>
+    <li><a href="#deploy">Free Bots</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
   <button class="nav-ham" onclick="toggleMob()">
@@ -909,7 +1120,7 @@
   <a href="#manifesto" onclick="toggleMob()">Chronicle</a>
   <a href="#arsenal"   onclick="toggleMob()">Arsenal</a>
   <a href="#works"     onclick="toggleMob()">Works</a>
-  <a href="#deploy"    onclick="toggleMob()">Deploy</a>
+  <a href="#deploy"    onclick="toggleMob()">Free Bots</a>
   <a href="#contact"   onclick="toggleMob()">Contact</a>
 </div>
 
@@ -1068,6 +1279,37 @@
       </div>
       <div class="wk-arrow">↗</div>
     </a>
+  </div>
+</section>
+
+<div class="divider fiu">· · · ◆ · · ·</div>
+
+<!-- STATS -->
+<section id="stats">
+  <div class="sec-head fiu">
+    <span class="sec-num">·</span>
+    <div class="sec-rule"></div>
+    <span class="sec-title">By the Numbers</span>
+    <div class="sec-rule"></div>
+    <span class="sec-dot">◆</span>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-card fiu">
+      <div class="stat-num"><span class="counter" data-target="40">0</span><span class="stat-acc">+</span></div>
+      <div class="stat-label">Projects Shipped</div>
+    </div>
+    <div class="stat-card fiu" style="transition-delay:.1s">
+      <div class="stat-num"><span class="counter" data-target="2">0</span><span class="stat-acc">yr</span></div>
+      <div class="stat-label">Experience</div>
+    </div>
+    <div class="stat-card fiu" style="transition-delay:.2s">
+      <div class="stat-num"><span class="counter" data-target="100">0</span><span class="stat-acc">%</span></div>
+      <div class="stat-label">Remote Ready</div>
+    </div>
+    <div class="stat-card fiu" style="transition-delay:.3s">
+      <div class="stat-num"><span class="stat-acc">∞</span></div>
+      <div class="stat-label">Cups of Tea</div>
+    </div>
   </div>
 </section>
 
@@ -1319,7 +1561,35 @@ document.getElementById('sti').addEventListener('keydown',e=>{
   e.target.value='';
 });
 
-/* ── WHISPER HINT ── */
+
+/* ── SCROLL PROGRESS ── */
+window.addEventListener('scroll', () => {
+  const sc = document.documentElement.scrollTop;
+  const sh = document.documentElement.scrollHeight - window.innerHeight;
+  document.getElementById('scroll-prog').style.width = (sc / sh * 100) + '%';
+  document.getElementById('btt').classList.toggle('show', sc > 400);
+});
+
+/* ── COUNT-UP ANIMATION ── */
+const countIO = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    const el = entry.target;
+    const target = parseInt(el.getAttribute('data-target'));
+    const dur = 1800;
+    const step = 16;
+    let cur = 0;
+    const inc = target / (dur / step);
+    const timer = setInterval(() => {
+      cur = Math.min(cur + inc, target);
+      el.textContent = Math.floor(cur);
+      if (cur >= target) clearInterval(timer);
+    }, step);
+    countIO.unobserve(el);
+  });
+}, { threshold: 0.4 });
+document.querySelectorAll('.counter').forEach(el => countIO.observe(el));
+
 setTimeout(()=>{
   const h=document.createElement('div');
   h.style.cssText='position:fixed;bottom:40px;left:52px;z-index:200;font-family:"Syne Mono",monospace;font-size:8px;color:rgba(232,50,26,0.18);letter-spacing:3px;pointer-events:none;transition:opacity 1.5s;text-transform:uppercase;';
